@@ -6,28 +6,23 @@
   vars:
     is_s431: "'${ansible_product_version}' == 'ThinkPad S3-S431'"
   tasks:
-  - name: install revelation
-    apt: pkg=revelation
-  - name: install dia
-    apt: pkg=dia
-  - name: install gip
-    apt: pkg=gip
-  - name: install inkscape
-    apt: pkg=inkscape
-  - name: install gimp
-    apt: pkg=gimp
-  - name: install zsh
-    apt: pkg=zsh
+  - name: install pkgs necessary for my system
+    apt: pkg=$item
+    with_items:
+      - postgresql
+      - revelation
+      - dia
+      - gip
+      - inkscape
+      - gimp
+      - zsh
+      - openssh-server
+      - curl
+      - vim
   - name: set all users to use ZSH
     command: chsh -s /bin/zsh $item
     with_items:
       - skamithi
-  - name: install openssh
-    apt: pkg=openssh-server
-  - name: install curl
-    apt: pkg=curl
-  - name: install vim
-    apt: pkg=vim
   - name: add vim to the update-alternatives editor list
     command: update-alternatives --install "/usr/bin/editor" "editor" "/usr/bin/vim" 5
   - name: set vim to the default editor
