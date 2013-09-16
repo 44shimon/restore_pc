@@ -1,0 +1,52 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  user: skamithi
+  sudo: yes
+  vars:
+    is_s431: "'${ansible_product_version}' == 'ThinkPad S3-S431'"
+  tasks:
+  - name: install revelation
+    apt: pkg=revelation
+  - name: install dia
+    apt: pkg=dia
+  - name: install gip
+    apt: pkg=gip
+  - name: install inkscape
+    apt: pkg=inkscape
+  - name: install gimp
+    apt: pkg=gimp
+  - name: install zsh
+    apt: pkg=zsh
+  - name: set all users to use ZSH
+    command: chsh -s /bin/zsh $item
+    with_items:
+      - skamithi
+  - name: install openssh
+    apt: pkg=openssh-server
+  - name: install curl
+    apt: pkg=curl
+  - name: install vim
+    apt: pkg=vim
+  - name: add vim to the update-alternatives editor list
+    command: update-alternatives --install "/usr/bin/editor" "editor" "/usr/bin/vim" 5
+  - name: set vim to the default editor
+    command: update-alternatives --set "editor" "/usr/bin/vim"
+  - name: install google chrome apt file
+    template: src=files/google-chrome.list dest=/etc/apt/sources.list.d/google-chrome.list
+  - name: install chrome
+    apt: pkg=google-chrome-stable update_cache=yes
+  - name: move tmp directory to RAM disk
+    mount: name=/tmp src=tmpfs fstype=tmpfs state=mounted
+  - name: move home directory download folder to RAM disk
+    mount: name=/home/skamithi/Downloads src=tmpfs fstype=tmpfs state=mounted
+  - name: move apt cache file to RAM disk
+    mount: name=/var/cache/apt/archives src=tmpfs fstype=tmpfs state=mounted
+  - name: disable bluetooth by default
+    template: src=files/bluetooth.conf dest=/etc/init/bluetooth.conf
+  - name: temp workaround to resolve slow wifi connection on lenovo s431 on startup
+    template: src=files/network-interface.conf  dest=/etc/init/network-interface.conf
+    only_if: "$is_s431"
+  - name: temp workaround to resolve slow wifi connection on resume
+    template: src=files/fix_slow_wifi_s431_resume  dest=/etc/pm/sleep.d/fix_slow_wifi_s431 mode=0755
+    only_if: "$is_s431"
