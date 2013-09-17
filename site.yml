@@ -9,6 +9,8 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - build-essential
+      - git-core
       - postgresql
       - revelation
       - dia
