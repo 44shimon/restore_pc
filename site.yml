@@ -6,6 +6,10 @@
   vars:
     is_s431: "'${ansible_product_version}' == 'ThinkPad S3-S431'"
   tasks:
+  - name: add TLP repo
+    apt_repository: repo='ppa:linrunner/tlp'
+  - name: install TLP
+    apt: pkg=tlp update_cache=yes
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
