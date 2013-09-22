@@ -4,7 +4,7 @@
   user: skamithi
   sudo: yes
   vars:
-    is_s431: "'${ansible_product_version}' == 'ThinkPad S3-S431'"
+    is_s431: "'$ansible_product_version' == 'ThinkPad S3-S431'"
   tasks:
   - name: add TLP repo
     apt_repository: repo='ppa:linrunner/tlp'
@@ -13,6 +13,8 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - tomboy
+      - pidgin
       - libmysqlclient-dev
       - build-essential
       - git-core
@@ -48,7 +50,7 @@
     template: src=files/bluetooth.conf dest=/etc/init/bluetooth.conf
   - name: temp workaround to resolve slow wifi connection on lenovo s431 on startup
     template: src=files/network-interface.conf  dest=/etc/init/network-interface.conf
-    only_if: "$is_s431"
+    when: is_s431
   - name: temp workaround to resolve slow wifi connection on resume
     template: src=files/fix_slow_wifi_s431_resume  dest=/etc/pm/sleep.d/fix_slow_wifi_s431 mode=0755
-    only_if: "$is_s431"
+    when: is_s431
