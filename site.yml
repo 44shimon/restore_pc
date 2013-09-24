@@ -6,13 +6,24 @@
   vars:
     is_s431: "'$ansible_product_version' == 'ThinkPad S3-S431'"
   tasks:
+  - name: add Canon printer PPA
+    apt_repository: repo='ppa:michael-gruz/canon-stable'
   - name: add TLP repo
-    apt_repository: repo='ppa:linrunner/tlp'
+    apt_repository: repo='ppa:linrunner/tlp' update_cache=yes
   - name: install TLP
-    apt: pkg=tlp update_cache=yes
+    apt: pkg=tlp
+# Fails due to restriction in apt module. it states that only native apps can be installed. some of canon mp560 files are 32 bit
+#
+  - name: install canon mp560 software
+    apt: pkg=$item
+    with_items:
+      - cnijfilter-mp560series-32
+      - scangearmp-mp560series-32
+
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - python-pip
       - tomboy
       - pidgin
       - libmysqlclient-dev
