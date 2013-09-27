@@ -6,14 +6,18 @@
   vars:
     is_s431: "'$ansible_product_version' == 'ThinkPad S3-S431'"
   tasks:
+  - name: install  virtualbox repo
+    apt_repository: repo="deb http://download.virtualbox.org/virtualbox/debian $ansible_distribution_release contrib" update_cache=yes
+  - name: install virtualbox apt key
+    apt_key: url=http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc  state=present
+  - name: install virtualbox
+    apt: pkg=virtualbox-4.2 force=yes
   - name: add Canon printer PPA
     apt_repository: repo='ppa:michael-gruz/canon-stable'
   - name: add TLP repo
     apt_repository: repo='ppa:linrunner/tlp' update_cache=yes
   - name: install TLP
     apt: pkg=tlp
-# Fails due to restriction in apt module. it states that only native apps can be installed. some of canon mp560 files are 32 bit
-#
   - name: install canon mp560 software
     apt: pkg=$item
     with_items:
