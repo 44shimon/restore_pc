@@ -6,6 +6,8 @@
   vars:
     is_s431: "'$ansible_product_version' == 'ThinkPad S3-S431'"
   tasks:
+  - name: install ubuntu on rails ppa
+    apt_repository: repo="ppa:ubuntu-on-rails/ppa" update_cache=yes
   - name: install  virtualbox repo
     apt_repository: repo="deb http://download.virtualbox.org/virtualbox/debian $ansible_distribution_release contrib" update_cache=yes
   - name: install virtualbox apt key
@@ -27,6 +29,7 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - gedit-gmate
       - python-pip
       - tomboy
       - pidgin
