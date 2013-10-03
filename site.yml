@@ -6,6 +6,8 @@
   vars:
     is_s431: "'$ansible_product_version' == 'ThinkPad S3-S431'"
   tasks:
+  - name: install unity lenses ppa
+    apt_repository: repo="ppa:scopes-packagers/ppa" update_cache=yes
   - name: install ubuntu on rails ppa
     apt_repository: repo="ppa:ubuntu-on-rails/ppa" update_cache=yes
   - name: install  virtualbox repo
@@ -29,6 +31,12 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - build-essentials
+      - python-software-properties
+      - network-manager-vpnc-gnome
+      - compizconfig-settings-manager
+      - unity-scope-calculator
+      - unity-lens-pidgin
       - ack-grep
       - exuberant-ctags
       - gedit-gmate
