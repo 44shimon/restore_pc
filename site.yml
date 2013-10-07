@@ -6,6 +6,10 @@
   vars:
     is_s431: "'$ansible_product_version' == 'ThinkPad S3-S431'"
   tasks:
+  - name: replace printers.conf for CUPs. only works for home setup
+    copy: src=files/printers.conf dest=/etc/cups/printers.conf owner=root group=lp mode=640 backup=yes
+  - name : restart CUPS service
+    service:  name=cups state=restarted
   - name: install unity lenses ppa
     apt_repository: repo="ppa:scopes-packagers/ppa" update_cache=yes
   - name: install ubuntu on rails ppa
@@ -27,11 +31,10 @@
     with_items:
       - cnijfilter-mp560series-32
       - scangearmp-mp560series-32
-
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
-      - build-essentials
+      - build-essential
       - python-software-properties
       - network-manager-vpnc-gnome
       - compizconfig-settings-manager
