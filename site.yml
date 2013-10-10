@@ -90,3 +90,5 @@
   - name: temp workaround to resolve slow wifi connection on resume
     template: src=files/fix_slow_wifi_s431_resume  dest=/etc/pm/sleep.d/fix_slow_wifi_s431 mode=0755
     when: is_s431
+  - name: add my user to kvm and libvirtd group for kvm support
+    user: name=skamithi append=yes groups="kvm,libvirtd"
