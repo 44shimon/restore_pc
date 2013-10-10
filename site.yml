@@ -34,6 +34,11 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - qemu-kvm
+      - libvirt-bin
+      - ubuntu-vm-builder
+      - bridge-utils
+      - transmission
       - build-essential
       - python-software-properties
       - network-manager-vpnc-gnome
