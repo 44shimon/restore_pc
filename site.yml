@@ -34,9 +34,11 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - dialog
+      - rcconf
       - qemu-kvm
       - libvirt-bin
-      - ubuntu-vm-builder
+      - python-vm-builder
       - bridge-utils
       - transmission
       - build-essential
@@ -92,3 +94,9 @@
     when: is_s431
   - name: add my user to kvm and libvirtd group for kvm support
     user: name=skamithi append=yes groups="kvm,libvirtd"
+  - name: grant qemu-system-x86_64 CAP_NET_ADMIN capability (64bit only)
+    command: setcap cap_net_admin=ei /usr/bin/qemu-system-x86_64
+  - name: add my username as cap_net_admin
+    lineinfile: create=yes line='cap_net_admin skamithi' dest=/etc/security/capability.conf regexp='^cap_net_admin'
+  - name: add my user to virtualbox user group
+    user: name=skamithi append=yes groups="vboxusers"
