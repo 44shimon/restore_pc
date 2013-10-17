@@ -20,6 +20,8 @@
     apt_key: url=http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc  state=present
   - name: install virtualbox
     apt: pkg=virtualbox-4.2 force=yes
+  - name: add ansible ppa
+    apt_repository: repo='ppa:rquillo/ansible'
   - name: add Canon printer PPA
     apt_repository: repo='ppa:michael-gruz/canon-stable'
   - name: add TLP repo
@@ -34,6 +36,7 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - ansible
       - iotop
       - dialog
       - rcconf
