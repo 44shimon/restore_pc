@@ -6,10 +6,6 @@
   vars:
     is_s431: "'$ansible_product_version' == 'ThinkPad S3-S431'"
   tasks:
-  - name: replace printers.conf for CUPs. only works for home setup
-    copy: src=files/printers.conf dest=/etc/cups/printers.conf owner=root group=lp mode=640 backup=yes
-  - name : restart CUPS service
-    service:  name=cups state=restarted
   - name: install unity lenses ppa
     apt_repository: repo="ppa:scopes-packagers/ppa" update_cache=yes
   - name: install ubuntu on rails ppa
@@ -20,12 +16,12 @@
     apt_key: url=http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc  state=present
   - name: install virtualbox
     apt: pkg=virtualbox-4.2 force=yes
-  - name: add ansible ppa
-    apt_repository: repo='ppa:rquillo/ansible'
   - name: add Canon printer PPA
     apt_repository: repo='ppa:michael-gruz/canon-stable'
   - name: add TLP repo
     apt_repository: repo='ppa:linrunner/tlp' update_cache=yes
+  - name: add partner repo
+    apt_repository: repo="deb http://archive.canonical.com/ precise partner" update_cache=yes
   - name: install TLP
     apt: pkg=tlp
   - name: install canon mp560 software
@@ -36,20 +32,12 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
-      - guestmount
-      - libguestfs-tools
-      - ansible
+      - skype
       - iotop
       - dialog
       - rcconf
-      - qemu-kvm
-      - libvirt-bin
-      - virtinst
-      - bridge-utils
       - transmission
-      - virt-viewer
       - build-essential
-      - dh-autoreconf
       - libsnmp-dev
       - libxml2-dev
       - libevent-dev
@@ -68,7 +56,6 @@
       - ack-grep
       - exuberant-ctags
       - gedit-gmate
-      - python-pip
       - tomboy
       - pidgin
       - libmysqlclient-dev
@@ -96,7 +83,7 @@
   - name: install google chrome apt file
     copy: src=files/google-chrome.list dest=/etc/apt/sources.list.d/google-chrome.list
   - name: install chrome
-    apt: pkg=google-chrome-stable update_cache=yes
+    apt: pkg=google-chrome-stable force=yes
   - name: move tmp directory to RAM disk
     mount: name=/tmp src=tmpfs fstype=tmpfs state=mounted
   - name: move home directory download folder to RAM disk
@@ -111,17 +98,15 @@
   - name: temp workaround to resolve slow wifi connection on resume
     copy: src=files/fix_slow_wifi_s431_resume  dest=/etc/pm/sleep.d/fix_slow_wifi_s431 mode=0755
     when: is_s431
-  - name: add my user to kvm and libvirtd group for kvm support
-    user: name=skamithi append=yes groups="kvm,libvirtd"
-  - name: grant qemu-system-x86_64 CAP_NET_ADMIN capability (64bit only)
-    command: setcap cap_net_admin=ei /usr/bin/qemu-system-x86_64
-  - name: add my username as cap_net_admin
-    lineinfile: create=yes line='cap_net_admin skamithi' dest=/etc/security/capability.conf regexp='^cap_net_admin'
   - name: add my user to virtualbox user group
     user: name=skamithi append=yes groups="vboxusers"
-  - include: compile-lldp.yml
-    vars:
-       tmp_dir: /tmp/lldp
+#  - include: compile-lldp.yml
+#    vars:
+#       tmp_dir: /tmp/lldp
+  - name: replace printers.conf for CUPs. only works for home setup
+    copy: src=files/printers.conf dest=/etc/cups/printers.conf owner=root group=lp mode=640 backup=yes
+  - name : restart CUPS service
+    service:  name=cups state=restarted
 
 
 
