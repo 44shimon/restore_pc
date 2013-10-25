@@ -32,6 +32,7 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - gitg
       - skype
       - iotop
       - dialog
@@ -47,6 +48,7 @@
       - pkg-config
       - autotools-dev
       - cdbs
+      - libgcrypt11-dev
       - debhelper
       - python-software-properties
       - network-manager-vpnc-gnome
