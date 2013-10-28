@@ -69,15 +69,25 @@
       - gip
       - inkscape
       - gimp
-      - zsh
       - openssh-server
       - curl
       - vim
       - packaging-dev
+  - name: copy zsh deb to /tmp directory
+    copy: src=files/zsh_5.0.0-2ubuntu1_amd64.deb dest=/tmp
+  - name: install zsh
+    command: dpkg -i /tmp/zsh_5.0.0-2ubuntu1_amd64.deb
   - name: set all users to use ZSH
     command: chsh -s /bin/zsh $item
     with_items:
       - skamithi
+  - name: make /tmp use RAMdisk instead of hard disk
+    lineinfile: dest=/etc/fstab backup=yes regexp="tmp\s+tmpfs" line="tmpfs /tmp tmpfs defaults 0 0"
+  - name: make aptitude cache dir use RAM instead of HDD
+    lineinfile: dest=/etc/fstab backup=yes regexp="archives\s+tmpfs" line="tmpfs /var/cache/apt/archives tmpfs defaults 0 0"
+  - name: make user download dir use RAM instead of HDD
+    lineinfile: dest=/etc/fstab backup=yes regexp="Downloads\s+tmpfs" line="tmpfs /home/skamithi/Downloads tmpfs defaults 0 0"
+
   - name: add vim to the update-alternatives editor list
     command: update-alternatives --install "/usr/bin/editor" "editor" "/usr/bin/vim" 5
   - name: set vim to the default editor
@@ -110,6 +120,5 @@
   - name : restart CUPS service
     service:  name=cups state=restarted
 
-
-
-
+  - name: add my server to my hosts file
+    lineinfile: dest=/etc/hosts regexp=^173.230.140.57 line="173.230.140.57    csf" backup=yes
