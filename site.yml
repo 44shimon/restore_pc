@@ -73,6 +73,8 @@
       - curl
       - vim
       - packaging-dev
+      # Required for ADB Chrome Extension
+      - libncurses5:i386
   - name: copy zsh deb to /tmp directory
     copy: src=files/zsh_5.0.0-2ubuntu1_amd64.deb dest=/tmp
   - name: install zsh
