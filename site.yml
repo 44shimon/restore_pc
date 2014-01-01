@@ -6,6 +6,13 @@
   vars:
     is_s431: "'$ansible_product_version' == 'ThinkPad S3-S431'"
   tasks:
+  - name: install adb ppa
+    apt_repository: repo="ppa:nilarimogard/webupd8" update_cache=yes
+  - name: install adb
+    apt: pkg=$item
+    with_items:
+      - android-tools-adb
+      - android-tools-fastboot
   - name: install unity lenses ppa
     apt_repository: repo="ppa:scopes-packagers/ppa" update_cache=yes
   - name: install ubuntu on rails ppa
@@ -15,7 +22,7 @@
   - name: install virtualbox apt key
     apt_key: url=http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc  state=present
   - name: install virtualbox
-    apt: pkg=virtualbox-4.2 force=yes
+    apt: pkg=virtualbox-4.3 force=yes
   - name: add Canon printer PPA
     apt_repository: repo='ppa:michael-gruz/canon-stable'
   - name: add TLP repo
