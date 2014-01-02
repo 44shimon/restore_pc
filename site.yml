@@ -23,19 +23,19 @@
     apt_key: url=http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc  state=present
   - name: install virtualbox
     apt: pkg=virtualbox-4.3 force=yes
-  - name: add Canon printer PPA
-    apt_repository: repo='ppa:michael-gruz/canon-stable'
+#  - name: add Canon printer PPA
+#    apt_repository: repo='ppa:michael-gruz/canon-stable'
   - name: add TLP repo
     apt_repository: repo='ppa:linrunner/tlp' update_cache=yes
   - name: add partner repo
     apt_repository: repo="deb http://archive.canonical.com/ precise partner" update_cache=yes
   - name: install TLP
     apt: pkg=tlp
-  - name: install canon mp560 software
-    apt: pkg=$item
-    with_items:
-      - cnijfilter-mp560series-32
-      - scangearmp-mp560series-32
+#  - name: install canon mp560 software
+#    apt: pkg=$item
+#    with_items:
+#      - cnijfilter-mp560series-32
+#      - scangearmp-mp560series-32
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
