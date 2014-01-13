@@ -9,6 +9,7 @@ Using ansible to backup the config of my laptop.
 After installing Ubuntu 12.04 run the following
 
 ```
+# sudo apt-get install git
 # sudo apt-get install python-pip
 # sudo pip install ansible
 # cat "127.0.0.1" > ~/ansible_hosts
