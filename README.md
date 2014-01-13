@@ -12,7 +12,7 @@ After installing Ubuntu 12.04 run the following
 # sudo apt-get install git
 # sudo apt-get install python-pip
 # sudo pip install ansible
-# cat "127.0.0.1" > ~/ansible_hosts
+# echo "127.0.0.1" > ~/ansible_hosts
 # export ANSIBLE_HOSTS=$HOME/ansible_hosts
 # cd restore_pc
 # ansible-playbook site.yml -K
