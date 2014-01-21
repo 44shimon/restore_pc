@@ -1,11 +1,13 @@
 ---
 - hosts: 127.0.0.1
-  connection: local
-  user: skamithi
-  sudo: yes
+  user: root
   vars:
     is_s431: "'$ansible_product_version' == 'ThinkPad S3-S431'"
   tasks:
+  - name: get username of core user
+    shell: 'grep "^sudo" /etc/group | cut -d: -f4'
+    register: core_username
+
   - name: install adb ppa
     apt_repository: repo="ppa:nilarimogard/webupd8" update_cache=yes
   - name: install adb
@@ -86,16 +88,14 @@
     copy: src=files/zsh_5.0.0-2ubuntu1_amd64.deb dest=/tmp
   - name: install zsh
     command: dpkg -i /tmp/zsh_5.0.0-2ubuntu1_amd64.deb
-  - name: set all users to use ZSH
-    command: chsh -s /bin/zsh $item
-    with_items:
-      - skamithi
+  - name: set core user to use ZSH
+    command: chsh -s /bin/zsh {{ core_username.stdout }}
   - name: make /tmp use RAMdisk instead of hard disk
     lineinfile: dest=/etc/fstab backup=yes regexp="tmp\s+tmpfs" line="tmpfs /tmp tmpfs defaults 0 0"
   - name: make aptitude cache dir use RAM instead of HDD
     lineinfile: dest=/etc/fstab backup=yes regexp="archives\s+tmpfs" line="tmpfs /var/cache/apt/archives tmpfs defaults 0 0"
   - name: make user download dir use RAM instead of HDD
-    lineinfile: dest=/etc/fstab backup=yes regexp="Downloads\s+tmpfs" line="tmpfs /home/skamithi/Downloads tmpfs defaults 0 0"
+    lineinfile: dest=/etc/fstab backup=yes regexp="Downloads\s+tmpfs" line="tmpfs /home/{{ core_username.stdout }}/Downloads tmpfs defaults 0 0"
 
   - name: add vim to the update-alternatives editor list
     command: update-alternatives --install "/usr/bin/editor" "editor" "/usr/bin/vim" 5
@@ -108,7 +108,7 @@
   - name: move tmp directory to RAM disk
     mount: name=/tmp src=tmpfs fstype=tmpfs state=mounted
   - name: move home directory download folder to RAM disk
-    mount: name=/home/skamithi/Downloads src=tmpfs fstype=tmpfs state=mounted
+    mount: name=/home/{{ core_username.stdout}}/Downloads src=tmpfs fstype=tmpfs state=mounted
   - name: move apt cache file to RAM disk
     mount: name=/var/cache/apt/archives src=tmpfs fstype=tmpfs state=mounted
   - name: disable bluetooth by default
@@ -120,7 +120,7 @@
     copy: src=files/fix_slow_wifi_s431_resume  dest=/etc/pm/sleep.d/fix_slow_wifi_s431 mode=0755
     when: is_s431
   - name: add my user to virtualbox user group
-    user: name=skamithi append=yes groups="vboxusers"
+    user: name={{ core_username.stdout}} append=yes groups="vboxusers"
 #  - include: compile-lldp.yml
 #    vars:
 #       tmp_dir: /tmp/lldp
