@@ -41,6 +41,9 @@
   - name: install pkgs necessary for my system
     apt: pkg=$item
     with_items:
+      - ufw
+      - wireshark
+      - vlc
       - gitg
       - skype
       - iotop
@@ -84,6 +87,8 @@
       - packaging-dev
       # Required for ADB Chrome Extension
       - libncurses5:i386
+  - name: enable ufw
+    service: name=ufw  state=started
   - name: copy zsh deb to /tmp directory
     copy: src=files/zsh_5.0.0-2ubuntu1_amd64.deb dest=/tmp
   - name: install zsh
