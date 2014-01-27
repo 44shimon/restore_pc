@@ -147,7 +147,7 @@
     file: path=/usr/local/bin/chromedriver mode=0755
 
   - name: enable middle click
-    command: "gsettings set org.gnome.settings-daemon.peripherals.mouse middle-button-enabled true"
+    shell: "sudo -u {{ core_username }} dbus-launch gsettings set org.gnome.settings-daemon.peripherals.mouse middle-button-enabled true" 
 
   - name: create custom setup for logitech marble ball
     copy: src=files/marble_mouse.conf  dest=/usr/share/X11/xorg.conf.d/50-marblemouse.conf
