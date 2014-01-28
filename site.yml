@@ -137,11 +137,17 @@
   - name: add my server to my hosts file
     lineinfile: dest=/etc/hosts regexp=^173.230.140.57 line="173.230.140.57    csf" backup=yes
 
+  - name: check if chromedriver exists
+    stat: path=/usr/local/bin/chromedriver
+    register: st
+
   - name: copy chromedriver for rails development
     get_url: url=http://chromedriver.storage.googleapis.com/2.5/chromedriver_linux64.zip dest=/tmp/chrome.zip
+    when: st.stat.exists == false
 
   - name: install chromedriver in usr local dir
-    command: unzip -qq -o /tmp/chrome.zip chdir=/usr/local/bin
+    command: unzip -qq -o /tmp/chrome.zip chdir=/usr/local/bin creates=/usr/local/bin/chromedriver
+    when: st.stat.exists == false
 
   - name: set correct file permissions for chromedriver
     file: path=/usr/local/bin/chromedriver mode=0755
