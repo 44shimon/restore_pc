@@ -11,7 +11,7 @@
   - name: install adb ppa
     apt_repository: repo="ppa:nilarimogard/webupd8" update_cache=yes
   - name: install adb
-    apt: pkg=$item
+    apt: pkg={{ item }}
     with_items:
       - android-tools-adb
       - android-tools-fastboot
@@ -39,7 +39,7 @@
 #      - cnijfilter-mp560series-32
 #      - scangearmp-mp560series-32
   - name: install pkgs necessary for my system
-    apt: pkg=$item
+    apt: pkg={{ item }}
     with_items:
       - ufw
       - wireshark
@@ -112,10 +112,12 @@
     apt: pkg=google-chrome-stable force=yes
   - name: move tmp directory to RAM disk
     mount: name=/tmp src=tmpfs fstype=tmpfs state=mounted
+
+  - name: delete contents of download directory
+    file: dest=/home/{{ core_username.stdout}}/Downloads state=absent
+
   - name: move home directory download folder to RAM disk
     mount: name=/home/{{ core_username.stdout}}/Downloads src=tmpfs fstype=tmpfs state=mounted
-  - name: move apt cache file to RAM disk
-    mount: name=/var/cache/apt/archives src=tmpfs fstype=tmpfs state=mounted
   - name: disable bluetooth by default
     copy: src=files/bluetooth.conf dest=/etc/init/bluetooth.conf
   - name: temp workaround to resolve slow wifi connection on lenovo s431 on startup
@@ -157,3 +159,10 @@
 
   - name: create custom setup for logitech marble ball
     copy: src=files/marble_mouse.conf  dest=/usr/share/X11/xorg.conf.d/50-marblemouse.conf
+
+  - name: delete contents of apt cache archive
+    file: dest=/var/cache/apt/archives state=absent
+
+  - name: move apt cache file to RAM disk
+    mount: name=/var/cache/apt/archives src=tmpfs fstype=tmpfs state=mounted
+  -
