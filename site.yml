@@ -3,6 +3,6 @@
   user: root
   tasks:
     - include: tasks/precise.yml
-      when: ansible_distribution_release == 'precise'
+      when: ansible_distribution_release  == 'precise'
     - include: tasks/trusty.yml
-      when: ansible_distribution_release == 'trusty'
+      when: ansible_distribution_release  == 'trusty'

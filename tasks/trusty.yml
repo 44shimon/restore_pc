@@ -2,21 +2,10 @@
   shell: 'grep "^sudo" /etc/group | cut -d: -f4'
   register: core_username
 
-- name: install  virtualbox repo
-  apt_repository: repo="deb http://download.virtualbox.org/virtualbox/debian $ansible_distribution_release contrib" update_cache=yes
-- name: install virtualbox apt key
-  apt_key: url=http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc  state=present
-- name: install virtualbox
-  apt: pkg=virtualbox-4.3 force=yes
-- name: add TLP repo
-  apt_repository: repo='ppa:linrunner/tlp' update_cache=yes
-- name: add partner repo
-  apt_repository: repo="deb http://archive.canonical.com/ precise partner" update_cache=yes
-- name: install TLP
-  apt: pkg=tlp
 - name: install pkgs necessary for my system
   apt: pkg={{ item }}
   with_items:
+    - virtualbox
     - ufw
     - wireshark
     - vlc
@@ -31,7 +20,6 @@
     - python-software-properties
     - ack-grep
     - exuberant-ctags
-    - gedit-gmate
     - tomboy
     - pidgin
     - git-core
@@ -66,18 +54,24 @@
 - name: move tmp directory to RAM disk
   mount: name=/tmp src=tmpfs fstype=tmpfs state=mounted
 
-- name: delete contents of download directory
-  file: dest=/home/{{ core_username.stdout}}/Downloads/ state=absent
+- name: create download directory if it doesn't exist
+  file: dest=/home/Downloads state=directory mode=0750 owner={{ core_username.stdout }}
+
+- name: delete {{ core_username.stdout }} downloads dir
+  file: dest=/home/{{ core_username.stdout}}/Downloads state=absent
+
+- name: symlink {{ core_username.stdout }} download dir to /home/downloads
+  file: src=/home/Downloads dest=/home/{{core_username.stdout }}/Downloads  owner={{core_username.stdout }} state=link
 
 - name: move home directory download folder to RAM disk
-  mount: name=/home/{{ core_username.stdout}}/Downloads src=tmpfs fstype=tmpfs state=mounted
+  mount: name=/home/Downloads src=tmpfs fstype=tmpfs state=mounted
+
 - name: disable bluetooth by default
   copy: src=files/bluetooth.conf dest=/etc/init/bluetooth.conf
+
 - name: add my user to virtualbox user group
   user: name={{ core_username.stdout}} append=yes groups="vboxusers"
-#  - include: compile-lldp.yml
-#    vars:
-#       tmp_dir: /tmp/lldp
+
 - name: add my server to my hosts file
   lineinfile: dest=/etc/hosts regexp=^173.230.140.57 line="173.230.140.57    csf" backup=yes
 
