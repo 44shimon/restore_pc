@@ -1,0 +1,110 @@
+- name: get username of core user
+  shell: 'grep "^sudo" /etc/group | cut -d: -f4'
+  register: core_username
+
+- name: install  virtualbox repo
+  apt_repository: repo="deb http://download.virtualbox.org/virtualbox/debian $ansible_distribution_release contrib" update_cache=yes
+- name: install virtualbox apt key
+  apt_key: url=http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc  state=present
+- name: install virtualbox
+  apt: pkg=virtualbox-4.3 force=yes
+- name: add TLP repo
+  apt_repository: repo='ppa:linrunner/tlp' update_cache=yes
+- name: add partner repo
+  apt_repository: repo="deb http://archive.canonical.com/ precise partner" update_cache=yes
+- name: install TLP
+  apt: pkg=tlp
+- name: install pkgs necessary for my system
+  apt: pkg={{ item }}
+  with_items:
+    - ufw
+    - wireshark
+    - vlc
+    - gitg
+    - skype
+    - iotop
+    - dialog
+    - rcconf
+    - transmission
+    - build-essential
+    - libgcrypt11-dev
+    - python-software-properties
+    - ack-grep
+    - exuberant-ctags
+    - gedit-gmate
+    - tomboy
+    - pidgin
+    - git-core
+    - postgresql
+    - revelation
+    - dia
+    - gip
+    - inkscape
+    - gimp
+    - openssh-server
+    - curl
+    - vim
+    - zsh
+    # Required for ADB Chrome Extension
+    #- libncurses5:i386
+- name: enable ufw
+  service: name=ufw  state=started
+- name: set core user to use ZSH
+  command: chsh -s /bin/zsh {{ core_username.stdout }}
+- name: make /tmp use RAMdisk instead of hard disk
+  lineinfile: dest=/etc/fstab backup=yes regexp="tmp\s+tmpfs" line="tmpfs /tmp tmpfs defaults 0 0"
+- name: make aptitude cache dir use RAM instead of HDD
+  lineinfile: dest=/etc/fstab backup=yes regexp="archives\s+tmpfs" line="tmpfs /var/cache/apt/archives tmpfs defaults 0 0"
+- name: make user download dir use RAM instead of HDD
+  lineinfile: dest=/etc/fstab backup=yes regexp="Downloads\s+tmpfs" line="tmpfs /home/{{ core_username.stdout }}/Downloads tmpfs defaults 0 0"
+
+- name: add vim to the update-alternatives editor list
+  command: update-alternatives --install "/usr/bin/editor" "editor" "/usr/bin/vim" 5
+- name: set vim to the default editor
+  command: update-alternatives --set "editor" "/usr/bin/vim"
+
+- name: move tmp directory to RAM disk
+  mount: name=/tmp src=tmpfs fstype=tmpfs state=mounted
+
+- name: delete contents of download directory
+  file: dest=/home/{{ core_username.stdout}}/Downloads/ state=absent
+
+- name: move home directory download folder to RAM disk
+  mount: name=/home/{{ core_username.stdout}}/Downloads src=tmpfs fstype=tmpfs state=mounted
+- name: disable bluetooth by default
+  copy: src=files/bluetooth.conf dest=/etc/init/bluetooth.conf
+- name: add my user to virtualbox user group
+  user: name={{ core_username.stdout}} append=yes groups="vboxusers"
+#  - include: compile-lldp.yml
+#    vars:
+#       tmp_dir: /tmp/lldp
+- name: add my server to my hosts file
+  lineinfile: dest=/etc/hosts regexp=^173.230.140.57 line="173.230.140.57    csf" backup=yes
+
+- name: check if chromedriver exists
+  stat: path=/usr/local/bin/chromedriver
+  register: st
+
+- name: copy chromedriver for rails development
+  get_url: url=http://chromedriver.storage.googleapis.com/2.5/chromedriver_linux64.zip dest=/tmp/chrome.zip
+  when: st.stat.exists == false
+
+- name: install chromedriver in usr local dir
+  command: unzip -qq -o /tmp/chrome.zip chdir=/usr/local/bin creates=/usr/local/bin/chromedriver
+  when: st.stat.exists == false
+
+- name: set correct file permissions for chromedriver
+  file: path=/usr/local/bin/chromedriver mode=0755
+
+- name: enable middle click
+  shell: "sudo -u {{ core_username.stdout }} dbus-launch gsettings set org.gnome.settings-daemon.peripherals.mouse middle-button-enabled true"
+
+- name: create custom setup for logitech marble ball
+  copy: src=files/marble_mouse.conf  dest=/usr/share/X11/xorg.conf.d/50-marblemouse.conf
+
+- name: delete contents of apt cache archive
+  file: dest=/var/cache/apt/archives state=absent
+
+- name: move apt cache file to RAM disk
+  mount: name=/var/cache/apt/archives src=tmpfs fstype=tmpfs state=mounted
+
