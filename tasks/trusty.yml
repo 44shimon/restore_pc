@@ -49,7 +49,7 @@
 - name: make aptitude cache dir use RAM instead of HDD
   lineinfile: dest=/etc/fstab backup=yes regexp="archives\s+tmpfs" line="tmpfs /var/cache/apt/archives tmpfs defaults 0 0"
 - name: make user download dir use RAM instead of HDD
-  lineinfile: dest=/etc/fstab backup=yes regexp="Downloads\s+tmpfs" line="tmpfs /home/{{ core_username.stdout }}/Downloads tmpfs defaults 0 0"
+  lineinfile: dest=/etc/fstab backup=yes regexp="Downloads\s+tmpfs" line="tmpfs /home/Downloads tmpfs defaults 0 0"
 
 - name: add vim to the update-alternatives editor list
   command: update-alternatives --install "/usr/bin/editor" "editor" "/usr/bin/vim" 5
@@ -125,10 +125,34 @@
   shell: "curl -sSL https://get.rvm.io | bash -s stable --ruby"
   when: st.stat.exists == False
 
-- name: assign "{{ core_username.stdout }}" to the rvm group
+- name: assign core user to the rvm group
   user: name={{ core_username.stdout }} append=yes groups="rvm"
 
-- name: install knife-solo
+- name: check if librarian-chef gem exists
+  shell: >
+    executable=/bin/bash source /etc/profile.d/rvm.sh;
+    gem list librarian-chef | grep librarian-chef
+  register: librarianchef
+  ignore_errors: true
+
+- name: check if knife-solo gem exists
+  shell: >
+    executable=/bin/bash source /etc/profile.d/rvm.sh;
+    gem list knife-solo | grep knife-solo
+  register: knifesolo
+  ignore_errors: true
+
+
+- name: install knife-solo gem
   shell: >
     executable=/bin/bash source /etc/profile.d/rvm.sh;
     gem install --no-ri --no-rdoc knife-solo
+  when: knifesolo.stdout == ''
+
+- name: install librarian-chef gem
+  shell: >
+    executable=/bin/bash source /etc/profile.d/rvm.sh;
+    gem install --no-ri --no-rdoc librarian-chef
+  when: librarianchef.stdout == ''
+
+
