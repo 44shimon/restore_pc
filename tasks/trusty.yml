@@ -1,10 +1,11 @@
 - name: get username of core user
-  shell: 'grep "^sudo" /etc/group | cut -d: -f4'
+  shell: 'grep "^sudo" /etc/group | cut -d: -f4 | cut -d, -f1'
   register: core_username
 
 - name: install pkgs necessary for my system
   apt: pkg={{ item }}
   with_items:
+    - htop
     - tree
     - libpython-dev
     - libyaml-dev
@@ -61,10 +62,10 @@
 - name: create download directory if it doesn't exist
   file: dest=/home/Downloads state=directory mode=0750 owner={{ core_username.stdout }}
 
-- name: delete {{ core_username.stdout }} downloads dir
+- name: delete core user downloads dir
   file: dest=/home/{{ core_username.stdout}}/Downloads state=absent
 
-- name: symlink {{ core_username.stdout }} download dir to /home/downloads
+- name: symlink core user download dir to /home/downloads
   file: src=/home/Downloads dest=/home/{{core_username.stdout }}/Downloads  owner={{core_username.stdout }} state=link
 
 - name: move home directory download folder to RAM disk
@@ -100,9 +101,34 @@
 - name: create custom setup for logitech marble ball
   copy: src=files/marble_mouse.conf  dest=/usr/share/X11/xorg.conf.d/50-marblemouse.conf
 
+- name: check if apt cache is using tmpfs
+  shell: "/bin/mount | grep 'tmpfs.*apt.*archives' "
+  register: apt_cache_tmpfs
+
 - name: delete contents of apt cache archive
   file: dest=/var/cache/apt/archives state=absent
+  when:  apt_cache_tmpfs.stdout == ''
 
 - name: move apt cache file to RAM disk
   mount: name=/var/cache/apt/archives src=tmpfs fstype=tmpfs state=mounted
+  when: apt_cache_tmpfs.stdout == ''
 
+- name: check if RVM is installed
+  stat: path=/etc/profile.d/rvm.sh
+  register: rvm
+
+- name: run apt-get update again. will speed up rvm install
+  apt: update_cache=yes
+  when: rvm.stat.exists == False
+
+- name: install RVM
+  shell: "curl -sSL https://get.rvm.io | bash -s stable --ruby"
+  when: st.stat.exists == False
+
+- name: assign "{{ core_username.stdout }}" to the rvm group
+  user: name={{ core_username.stdout }} append=yes groups="rvm"
+
+- name: install knife-solo
+  shell: >
+    executable=/bin/bash source /etc/profile.d/rvm.sh;
+    gem install --no-ri --no-rdoc knife-solo
