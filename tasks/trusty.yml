@@ -5,6 +5,7 @@
 - name: install pkgs necessary for my system
   apt: pkg={{ item }}
   with_items:
+    - gnome-search-tool
     - htop
     - tree
     - libpython-dev
