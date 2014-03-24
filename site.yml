@@ -6,3 +6,5 @@
       when: ansible_distribution_release  == 'precise'
     - include: tasks/trusty.yml
       when: ansible_distribution_release  == 'trusty'
+  handlers:
+    - include: handlers/main.yml

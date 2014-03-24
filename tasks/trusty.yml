@@ -41,6 +41,13 @@
     - zsh
     # Required for ADB Chrome Extension
     #- libncurses5:i386
+- name: update grub to fix backlight issues
+  lineinfile:
+    dest=/etc/default/grub
+    backup=yes
+    regexp="GRUB_CMDLINE_LINUX_DEFAULT"
+    line='GRUB_CMDLINE_LINUX_DEFAULT="quiet splash acpi_backlight=vendor thinkpad-acpi.brightness_enable=1"'
+  notify: reconfigure grub
 - name: enable ufw
   service: name=ufw  state=started
 - name: set core user to use ZSH
