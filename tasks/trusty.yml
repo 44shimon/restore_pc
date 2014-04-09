@@ -39,6 +39,9 @@
     - curl
     - vim
     - zsh
+    - libjpeg-dev
+    - libgif-dev
+    - libcairo2-dev
     # Required for ADB Chrome Extension
     #- libncurses5:i386
 - name: update grub to fix backlight issues
@@ -53,12 +56,14 @@
 - name: set core user to use ZSH
   command: chsh -s /bin/zsh {{ core_username.stdout }}
 - name: make /tmp use RAMdisk instead of hard disk
-  lineinfile: dest=/etc/fstab backup=yes regexp="tmp\s+tmpfs" line="tmpfs /tmp tmpfs defaults 0 0"
+  lineinfile: dest=/etc/fstab backup=yes regexp="^tmpfs /tmp" line="tmpfs /tmp tmpfs defaults 0 0"
 - name: make aptitude cache dir use RAM instead of HDD
   lineinfile: dest=/etc/fstab backup=yes regexp="archives\s+tmpfs" line="tmpfs /var/cache/apt/archives tmpfs defaults 0 0"
 - name: make user download dir use RAM instead of HDD
   lineinfile: dest=/etc/fstab backup=yes regexp="Downloads\s+tmpfs" line="tmpfs /home/Downloads tmpfs defaults 0 0"
 
+- name: make /var/tmp use RAM instead of HDD
+  lineinfile: dest=/etc/fstab backup=yes regexp="^tmpfs /var/tmp" line="tmpfs /var/tmp tmpfs defaults 0 0"
 - name: add vim to the update-alternatives editor list
   command: update-alternatives --install "/usr/bin/editor" "editor" "/usr/bin/vim" 5
 - name: set vim to the default editor
