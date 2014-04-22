@@ -7,6 +7,8 @@
 - name: install pkgs necessary for my system
   apt: pkg={{ item }}
   with_items:
+    - virt-manager
+    - python-spice-client-gtk
     - google-drive-ocamlfuse
     - gnome-search-tool
     - htop
@@ -92,6 +94,9 @@
 
 - name: add my user to virtualbox user group
   user: name={{ core_username.stdout}} append=yes groups="vboxusers"
+
+- name: add my user to fuse user group
+  user: name={{ core_username.stdout}} append=yes groups="fuse"
 
 - name: add my server to my hosts file
   lineinfile: dest=/etc/hosts regexp=^173.230.140.57 line="173.230.140.57    csf" backup=yes
