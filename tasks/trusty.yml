@@ -2,14 +2,11 @@
   shell: 'grep "^sudo" /etc/group | cut -d: -f4 | cut -d, -f1'
   register: core_username
 
-- name: install google drive ppa
-  apt_repository:  repo="ppa:alessandro-strada/ppa"
 - name: install pkgs necessary for my system
   apt: pkg={{ item }}
   with_items:
     - virt-manager
     - python-spice-client-gtk
-    - google-drive-ocamlfuse
     - gnome-search-tool
     - htop
     - tree
