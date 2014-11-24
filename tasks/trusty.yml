@@ -13,7 +13,6 @@
     - libpython-dev
     - libyaml-dev
     - ubuntuone-control-panel-qt
-    - virtualbox
     - ufw
     - wireshark
     - vlc
@@ -29,7 +28,6 @@
     - ack-grep
     - exuberant-ctags
     - tomboy
-    - pidgin
     - git-core
     - postgresql
     - revelation
