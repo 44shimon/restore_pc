@@ -89,9 +89,6 @@
 - name: disable bluetooth by default
   copy: src=files/bluetooth.conf dest=/etc/init/bluetooth.conf
 
-- name: add my user to virtualbox user group
-  user: name={{ core_username.stdout}} append=yes groups="vboxusers"
-
 - name: add my user to fuse user group
   user: name={{ core_username.stdout}} append=yes groups="fuse"
 
