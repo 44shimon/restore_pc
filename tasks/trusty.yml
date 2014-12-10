@@ -6,6 +6,7 @@
   apt: pkg={{ item }}
   with_items:
     - virt-manager
+    - qemu-kvm
     - pidgin
     - python-spice-client-gtk
     - gnome-search-tool
