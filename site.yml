@@ -2,8 +2,6 @@
 - hosts: 127.0.0.1
   user: root
   tasks:
-    - include: tasks/precise.yml
-      when: ansible_distribution_release  == 'precise'
     - include: tasks/trusty.yml
       when: ansible_distribution_release  == 'trusty'
   handlers:
