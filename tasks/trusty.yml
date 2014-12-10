@@ -6,6 +6,7 @@
   apt: pkg={{ item }}
   with_items:
     - virt-manager
+    - pidgin
     - python-spice-client-gtk
     - gnome-search-tool
     - htop
@@ -173,7 +174,7 @@
 - name: add my user to various  groups
   user: name={{ core_username.stdout}} append=yes groups={{ item }}
   with_items:
-    - libvirt
+    - libvirtd
     - disk
     - adm
     - audio
