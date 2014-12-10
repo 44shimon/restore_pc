@@ -12,7 +12,6 @@
     - tree
     - libpython-dev
     - libyaml-dev
-    - ubuntuone-control-panel-qt
     - ufw
     - wireshark
     - vlc
@@ -111,6 +110,9 @@
 - name: enable middle click
   shell: "sudo -u {{ core_username.stdout }} dbus-launch gsettings set org.gnome.settings-daemon.peripherals.mouse middle-button-enabled true"
 
+- name: make sure files are not seen on the desktop
+  shell: "sudo -u {{ core_username.stdout }} dbus-launch gsettings set org.gnome.desktop.background show-desktop-icons false"
+
 - name: create custom setup for logitech marble ball
   copy: src=files/marble_mouse.conf  dest=/usr/share/X11/xorg.conf.d/50-marblemouse.conf
 
@@ -168,4 +170,11 @@
     gem install --no-ri --no-rdoc librarian-chef
   when: librarianchef.stdout == ''
 
+- name: add my user to various  groups
+  user: name={{ core_username.stdout}} append=yes groups={{ item }}
+  with_items:
+    - libvirt
+    - disk
+    - adm
+    - audio
 
