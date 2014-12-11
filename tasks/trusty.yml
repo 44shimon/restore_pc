@@ -6,6 +6,7 @@
   apt: pkg={{ item }}
   with_items:
     - virt-manager
+    - rdesktop
     - virt-viewer
     - gnome-tweak-tool
     - qemu-kvm
