@@ -6,6 +6,7 @@
   apt: pkg={{ item }}
   with_items:
     - virt-manager
+    - libguestfs-tools
     - rdesktop
     - virt-viewer
     - gnome-tweak-tool
