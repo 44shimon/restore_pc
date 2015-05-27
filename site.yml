@@ -6,3 +6,9 @@
       when: ansible_distribution_release  == 'trusty'
   handlers:
     - include: handlers/main.yml
+
+- hosts: 127.0.0.1
+  user: stanleyk
+  tasks:
+    - include: tasks/user_trusty.yml
+      when: ansible_distribution_release == 'trusty'

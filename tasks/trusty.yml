@@ -46,6 +46,7 @@
     - libjpeg-dev
     - libgif-dev
     - libcairo2-dev
+    - lxc
     # Required for ADB Chrome Extension
     #- libncurses5:i386
 - name: update grub to fix backlight issues
@@ -134,48 +135,6 @@
   mount: name=/var/cache/apt/archives src=tmpfs fstype=tmpfs state=mounted
   when: apt_cache_tmpfs.stdout == ''
 
-- name: check if RVM is installed
-  stat: path=/etc/profile.d/rvm.sh
-  register: rvm
-
-- name: run apt-get update again. will speed up rvm install
-  apt: update_cache=yes
-  when: rvm.stat.exists == False
-
-- name: install RVM
-  shell: "curl -sSL https://get.rvm.io | bash -s stable --ruby"
-  when: rvm.stat.exists == False
-
-- name: assign core user to the rvm group
-  user: name={{ core_username.stdout }} append=yes groups="rvm"
-
-- name: check if librarian-chef gem exists
-  shell: >
-    executable=/bin/bash source /etc/profile.d/rvm.sh;
-    gem list librarian-chef | grep librarian-chef
-  register: librarianchef
-  ignore_errors: true
-
-- name: check if knife-solo gem exists
-  shell: >
-    executable=/bin/bash source /etc/profile.d/rvm.sh;
-    gem list knife-solo | grep knife-solo
-  register: knifesolo
-  ignore_errors: true
-
-
-- name: install knife-solo gem
-  shell: >
-    executable=/bin/bash source /etc/profile.d/rvm.sh;
-    gem install --no-ri --no-rdoc knife-solo
-  when: knifesolo.stdout == ''
-
-- name: install librarian-chef gem
-  shell: >
-    executable=/bin/bash source /etc/profile.d/rvm.sh;
-    gem install --no-ri --no-rdoc librarian-chef
-  when: librarianchef.stdout == ''
-
 - name: add my user to various  groups
   user: name={{ core_username.stdout}} append=yes groups={{ item }}
   with_items:
@@ -184,3 +143,10 @@
     - adm
     - audio
 
+- name: install lxc related directories
+  file: path={{item}} state=directory mode=755
+  with_items:
+        - "/etc/lxc"
+
+- name: install lxc-username
+  template: src=lxc_usernet.j2 dest=/etc/lxc/lxc-usernet
