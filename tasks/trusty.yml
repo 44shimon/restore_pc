@@ -60,6 +60,12 @@
   service: name=ufw  state=started
 - name: set core user to use ZSH
   command: chsh -s /bin/zsh {{ core_username.stdout }}
+
+- name: make sure var/lib/misc exists
+  file: path=/var/lib/misc state=directory
+
+- name: make /tmp use RAMdisk instead of hard disk
+  lineinfile: dest=/etc/fstab backup=yes regexp="^tmpfs /tmp" line="tmpfs /var/lib/misc tmpfs defaults 0 0"
 - name: make /tmp use RAMdisk instead of hard disk
   lineinfile: dest=/etc/fstab backup=yes regexp="^tmpfs /tmp" line="tmpfs /tmp tmpfs defaults 0 0"
 - name: make aptitude cache dir use RAM instead of HDD
