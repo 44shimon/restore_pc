@@ -1,0 +1,30 @@
+- name: install virtualization related apps
+  apt: pkg={{ item }} update_cache=yes
+  with_items:
+    - virt-manager
+    - virt-viewer
+    - qemu-kvm
+    - libvirt-bin
+    - wireshark
+    - libguestfs-tools
+
+- name: install general tools
+  apt: pkg={{ item }}
+  with_items:
+    - iotop
+    - build-essential
+    - git-buildpackage
+    - python-software-properties
+    - software-properties-common
+    - tree
+    - htop
+
+- name: install desktop related tools
+  apt: pkg={{ item }}
+  with_items:
+    - gimp
+    - inkscape
+    - gip
+    - revelation
+    - zsh
+    - vim-nox

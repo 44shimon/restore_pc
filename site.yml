@@ -1,14 +1,7 @@
 ---
 - hosts: 127.0.0.1
-  user: root
-  tasks:
-    - include: tasks/trusty.yml
-      when: ansible_distribution_release  == 'trusty'
-  handlers:
-    - include: handlers/main.yml
-
-- hosts: 127.0.0.1
-  user: stanleyk
-  tasks:
-    - include: tasks/user_trusty.yml
-      when: ansible_distribution_release == 'trusty'
+  connection: local
+  user: skamithi
+  become: True
+  roles:
+    - { role: setup_system, tags: ['system_setup']  }
