@@ -1,6 +1,10 @@
 ---
 - hosts: 127.0.0.1
-  user: root
-  become: True
+  remote_user: root
   roles:
     - { role: setup_system, tags: ['system_setup']  }
+
+- hosts: 127.0.0.1
+  user: skamithi
+  roles:
+    - { role: user_configs, tags: [ 'user_config' ]}

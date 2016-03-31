@@ -38,3 +38,7 @@
 
 - name: install netshow
   pip: name=netshow-linux-lib
+
+- name: set zsh as the default shell
+  user: name={{ item }} shell=/bin/zsh
+  items: user_list
