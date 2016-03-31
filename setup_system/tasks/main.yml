@@ -7,6 +7,7 @@
     - libvirt-bin
     - wireshark
     - libguestfs-tools
+    - python-setuptools
 
 - name: install general tools
   apt: pkg={{ item }}
@@ -18,6 +19,7 @@
     - software-properties-common
     - tree
     - htop
+    - zsh
 
 - name: install desktop related tools
   apt: pkg={{ item }}
@@ -29,3 +31,10 @@
     - zsh
     - vim-nox
     - blueman
+    - pencil
+
+- name: install pip using easy_install
+  command: easy_install pip creates=/usr/local/bin/pip
+
+- name: install netshow
+  pip: name=netshow-linux-lib
