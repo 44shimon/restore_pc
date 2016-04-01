@@ -1,14 +1,11 @@
 - name: install virtualization related apps
   apt: pkg={{ item }} update_cache=yes
   with_items:
-    - virt-manager
-    - virt-viewer
     - qemu-kvm
     - libvirt-bin
     - wireshark
     - libguestfs-tools
     - python-setuptools
-    - virt-manager
 
 - name: install general tools
   apt: pkg={{ item }}
@@ -24,7 +21,6 @@
     - ruby-dev
     - libvirt-dev
     - unzip
-    - transmission
 
 - name: install desktop related tools
   apt: pkg={{ item }}
@@ -37,6 +33,10 @@
     - vim-nox
     - blueman
     - pencil
+    - transmission
+    - virt-manager
+    - virt-viewer
+  tags: desktop
 
 - name: install pip using easy_install
   command: easy_install pip creates=/usr/local/bin/pip
