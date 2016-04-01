@@ -8,6 +8,7 @@
     - wireshark
     - libguestfs-tools
     - python-setuptools
+    - virt-manager
 
 - name: install general tools
   apt: pkg={{ item }}
@@ -23,6 +24,7 @@
     - ruby-dev
     - libvirt-dev
     - unzip
+    - transmission
 
 - name: install desktop related tools
   apt: pkg={{ item }}
