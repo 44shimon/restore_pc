@@ -37,6 +37,8 @@
     - virt-manager
     - virt-viewer
     - pidgin
+    - ruby-dev
+
   tags: desktop
 
 - name: install pip using easy_install
@@ -106,3 +108,6 @@
     - name: install chrome stable
       apt: name=google-chrome-stable update_cache=yes
   tags: desktop
+
+- name: add blog site IP to /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='^173\.230\.140\.57' line='173.230.140.57 csf' owner=root group=root mode=0644
