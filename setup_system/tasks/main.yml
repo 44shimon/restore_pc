@@ -21,6 +21,8 @@
     - ruby-dev
     - libvirt-dev
     - unzip
+    - libxml2-dev
+    - zlib1g-dev
 
 - name: install desktop related tools
   apt: pkg={{ item }}
@@ -37,7 +39,6 @@
     - virt-manager
     - virt-viewer
     - pidgin
-    - ruby-dev
 
   tags: desktop
 
