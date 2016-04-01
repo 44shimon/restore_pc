@@ -39,6 +39,16 @@
 - name: install netshow
   pip: name=netshow-linux-lib
 
-- name: set zsh as the default shell
+- name: set zsh as the default shell for users in the user_list var
   user: name={{ item }} shell=/bin/zsh
   items: user_list
+
+- block:
+    - name: check if Atom deb is installed
+      apt: name=atom state=present
+  rescue:
+    - name: download latest version of Atom
+      get_url: url=https://atom.io/download/deb dest=/tmp
+      register: url_result
+    - name: install Atom deb
+      apt: deb="{{ url_result.dest }}"

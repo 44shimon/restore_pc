@@ -1,16 +1,12 @@
-- name: Backing up existing ~/.zshrc
-  shell: if [ -f ~/.zshrc ]; then mv ~/.zshrc{,.orig}; fi
-  when: installation|success
-
 - name: Cloning  oh-my-zsh
   git:
-    repo=https://github.com/robbyrussell/oh-my-zsh
-    dest=~/.oh-my-zsh
-  when: installation|success
-  register: cloning
+    repo: "https://github.com/robbyrussell/oh-my-zsh"
+    dest: "{{ ansible_user_dir}}/.oh-my-zsh"
+  register: oh_my_zsh_cloning
 
-- name: Creating new ~/.zshrc
+
+- name: create .zshrc from oh-my-zsh templates
   copy:
-    src=~/.oh-my-zsh/templates/zshrc.zsh-template
-    dest=~/.zshrc
-  when: cloning|success
+    src: "{{ ansible_user_dir }}/.oh-my-zsh/templates/zshrc.zsh-template"
+    dest: "{{ ansible_user_dir }}/.zshrc"
+  when: oh_my_zsh_cloning|changed
