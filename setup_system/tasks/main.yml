@@ -20,6 +20,8 @@
     - tree
     - htop
     - zsh
+    - ruby-dev
+    - libvirt-dev
 
 - name: install desktop related tools
   apt: pkg={{ item }}
@@ -55,7 +57,7 @@
 
 - block:
     - name: check if Vagrant deb is installed
-      apt: name=vagrant state=present
+      shell: dpkg -l  | grep vagrant
   rescue:
     - name: download latest vagrant
       get_url:
@@ -63,4 +65,4 @@
         dest: /tmp
       register: vagrant_download
     - name: install vagrant deb
-      apt: name="{{ vagrant_download.dest }}" state=present
+      apt: deb="{{ vagrant_download.dest }}" state=present

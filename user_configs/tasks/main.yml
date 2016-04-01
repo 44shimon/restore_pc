@@ -10,3 +10,10 @@
     src: "{{ ansible_user_dir }}/.oh-my-zsh/templates/zshrc.zsh-template"
     dest: "{{ ansible_user_dir }}/.zshrc"
   when: oh_my_zsh_cloning|changed
+
+- block:
+    - name: check if vagrant libvirt is installed
+      shell: vagrant plugin list | grep libvirt
+  rescue:
+    - name: install vagrant-libvirt plugin
+      shell: vagrant plugin install vagrant-libvirt
