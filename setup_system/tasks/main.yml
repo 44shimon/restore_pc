@@ -22,6 +22,7 @@
     - zsh
     - ruby-dev
     - libvirt-dev
+    - unzip
 
 - name: install desktop related tools
   apt: pkg={{ item }}
@@ -66,3 +67,24 @@
       register: vagrant_download
     - name: install vagrant deb
       apt: deb="{{ vagrant_download.dest }}" state=present
+
+- block:
+    - name: check if packer is installed
+      file: path="/opt/packer/packer" state=file
+  rescue:
+    - name: download packer file
+      get_url:
+        url: "https://releases.hashicorp.com/packer/{{ packer_version}}/packer_{{ packer_version }}_linux_amd64.zip"
+        dest: /tmp
+      register: packer_zip
+
+    - name: create packer home directory
+      file: path=/opt/packer state=directory mode=0755
+
+    - name: unarchive packer file
+      unarchive:
+        src: "{{ packer_zip.dest }}"
+        dest: "/opt/packer/"
+
+- name: create a symlink for the packer executable
+  file: src=/opt/packer/packer dest=/usr/local/bin/packer state=link
