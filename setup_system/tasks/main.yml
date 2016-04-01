@@ -52,3 +52,15 @@
       register: url_result
     - name: install Atom deb
       apt: deb="{{ url_result.dest }}"
+
+- block:
+    - name: check if Vagrant deb is installed
+      apt: name=vagrant state=present
+  rescue:
+    - name: download latest vagrant
+      get_url:
+        url: "https://releases.hashicorp.com/vagrant/{{ vagrant_version}}/vagrant_{{ vagrant_version }}_x86_64.deb"
+        dest: /tmp
+      register: vagrant_download
+    - name: install vagrant deb
+      apt: name="{{ vagrant_download.dest }}" state=present
