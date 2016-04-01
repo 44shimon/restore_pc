@@ -36,6 +36,7 @@
     - transmission
     - virt-manager
     - virt-viewer
+    - pidgin
   tags: desktop
 
 - name: install pip using easy_install
