@@ -90,3 +90,18 @@
 
 - name: create a symlink for the packer executable
   file: src=/opt/packer/packer dest=/usr/local/bin/packer state=link
+
+- block:
+    - name: check if google chrome is installed
+      apt: name=google-chrome-stable
+
+  rescue:
+    - name: add google chrome apt key
+      apt_key:
+        url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
+    - name: apt repo for google chrome
+      apt_repository:
+        repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+    - name: install chrome stable
+      apt: name=google-chrome-stable update_cache=yes
+  tags: desktop
