@@ -1,3 +1,5 @@
+#:set ft=ansible
+
 - name: install virtualization related apps
   apt: pkg={{ item }} update_cache=yes
   with_items:
@@ -23,6 +25,7 @@
     - unzip
     - libxml2-dev
     - zlib1g-dev
+    - gitg
 
 - name: install desktop related tools
   apt: pkg={{ item }}
@@ -39,7 +42,7 @@
     - virt-manager
     - virt-viewer
     - pidgin
-
+    - vim-gnome
   tags: desktop
 
 - name: install pip using easy_install
@@ -112,3 +115,40 @@
 
 - name: add blog site IP to /etc/hosts
   lineinfile: dest=/etc/hosts regexp='^173\.230\.140\.57' line='173.230.140.57 csf' owner=root group=root mode=0644
+
+- name: make /tmp use RAMdisk instead of hard disk
+  lineinfile: dest=/etc/fstab backup=yes regexp="^tmpfs /tmp" line="tmpfs /tmp tmpfs defaults 0 0"
+
+- name: make aptitude cache dir use RAM instead of HDD
+  lineinfile: dest=/etc/fstab backup=yes regexp="archives\s+tmpfs" line="tmpfs /var/cache/apt/archives tmpfs defaults 0 0"
+
+- name: create downloads directory. make it permission 777
+  file: path=/home/Downloads state=directory mode=0777
+
+- name: make user download dir use RAM instead of HDD
+  lineinfile: dest=/etc/fstab backup=yes regexp="Downloads\s+tmpfs" line="tmpfs /home/Downloads tmpfs defaults 0 0"
+
+- name: make /var/tmp use RAM instead of HDD
+  lineinfile: dest=/etc/fstab backup=yes regexp="^tmpfs /var/tmp" line="tmpfs /var/tmp tmpfs defaults 0 0"
+
+- block:
+    - name: check if /var/tmp is mounted as tmpfs
+      shell: df | grep "/var/tmp"
+  rescue:
+    - name: delete contents of /var/tmp
+      command: rm -rf /var/tmp/*
+
+    - name: mount /var/tmp directory as tmpfs
+      command: mount /var/tmp
+
+- block:
+    - name: check if /tmp is mounted as tmpfs
+      shell: df | grep "/tmp"
+  rescue:
+    - name: delete contents of /tmp
+      command: rm -rf /tmp/*
+
+    - name: mount /tmp directory as tmpfs
+      command: mount /tmp
+
+
