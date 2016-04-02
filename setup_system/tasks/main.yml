@@ -151,4 +151,15 @@
     - name: mount /tmp directory as tmpfs
       command: mount /tmp
 
+- block:
+    - name: check if /var/cache/apt/archives is mounted as tmpfs
+      shell: df | grep "archives"
+  rescue:
+    - name: delete contents of /var/cache/apt/archives
+      command: rm -rf /var/cache/apt/archives/*
+
+    - name: mount /var/cache/apt/archives directory as tmpfs
+      command: mount /var/cache/apt/archives
+
+
 
