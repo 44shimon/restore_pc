@@ -1,3 +1,6 @@
 user_list: ['skamithi']
 vagrant_version: "1.8.1"
 packer_version: "0.10.0"
+nvm:
+  version: "v0.31.0"
+  node_version: "v5.10.0"

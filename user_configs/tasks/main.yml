@@ -29,7 +29,32 @@
     - name: install vagrant-libvirt plugin
       shell: vagrant plugin install vagrant-libvirt
 
-- name: install nvm in user mode
-  shell: curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
-  args:
-     creates: "{{ansible_user_dir}}/.nvm"
+- name: install nvm
+  git:
+    repo: https://github.com/creationix/nvm.git
+    dest: "{{ ansible_user_dir}}/.nvm"
+    version: "{{ nvm.version }}"
+  tags: nvm
+
+- name: source nvm in ~/.profile
+  lineinfile: >
+    dest="{{ansible_user_dir}}/.profile"
+    line=". ~/.nvm/nvm.sh"
+    create=yes
+
+- block:
+    - name: check if {{ nvm.node_version}} exists
+      shell: source ~/.profile && nvm list | grep {{ nvm.node_version }}
+      args:
+        executable: /bin/bash
+  rescue:
+    - name: install {{ nvm.node_version }}
+      shell: source ~/.profile && nvm install {{ nvm.node_version }}
+      args:
+        executable: /bin/bash
+
+  #- name: install coffeescript, bower in global dir
+  #  npm: name={{item}} global=yes executable_location="{{ansible_user_dir}}/.nvm/
+  #  with_items:
+  #    - bower
+  #    - coffeescript
