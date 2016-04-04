@@ -29,3 +29,7 @@
     - name: install vagrant-libvirt plugin
       shell: vagrant plugin install vagrant-libvirt
 
+- name: install nvm in user mode
+  shell: curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+  args:
+     creates: "{{ansible_user_dir}}/.nvm"
