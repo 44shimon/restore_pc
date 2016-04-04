@@ -161,5 +161,15 @@
     - name: mount /var/cache/apt/archives directory as tmpfs
       command: mount /var/cache/apt/archives
 
+- block:
+    - name: check if /home/Downloads is mounted as tmpfs
+      shell: df | grep "Downloads"
+  rescue:
+    - name: delete contents of /home/Downloads
+      command: rm -rf /home/Downloads/*
+
+    - name: mount /home/Downloads directory as tmpfs
+      command: mount /home/Downloads
+
 
 

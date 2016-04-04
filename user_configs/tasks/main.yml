@@ -1,6 +1,7 @@
 - name: Cloning  oh-my-zsh
   git:
     repo: "https://github.com/robbyrussell/oh-my-zsh"
+    update: no
     dest: "{{ ansible_user_dir}}/.oh-my-zsh"
   register: oh_my_zsh_cloning
 
@@ -12,8 +13,19 @@
   when: oh_my_zsh_cloning|changed
 
 - block:
+    - name: check if /home/Downloads is mounted as tmpfs
+      shell: df | grep "Downloads"
+  rescue:
+    - name: delete contents of /home/Downloads
+      command: rm -rf {{ansible_user_dir}}/Downloads
+
+- name: create symlink from /home/Downloads to $HOME/Downloads
+  file: src=/home/Downloads dest="{{ ansible_user_dir}}/Downloads" state=link
+
+- block:
     - name: check if vagrant libvirt is installed
       shell: vagrant plugin list | grep libvirt
   rescue:
     - name: install vagrant-libvirt plugin
       shell: vagrant plugin install vagrant-libvirt
+
