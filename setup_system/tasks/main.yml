@@ -29,6 +29,7 @@
     - curl
     - revelation
     - gparted
+    - libreadline-dev
 
 - name: install desktop related tools
   apt: pkg={{ item }}
