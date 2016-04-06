@@ -64,3 +64,11 @@
     - bower
     - coffee-script
   tags: nvm
+
+- name: install vim settings
+  git:
+    repo: https://github.com/skamithi/vim_home
+    dest: "{{ ansible_user_dir }}/.vim"
+    recursive: yes
+  ignore_errors: yes
+  tags: vim_settings

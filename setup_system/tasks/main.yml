@@ -28,6 +28,7 @@
     - gitg
     - curl
     - revelation
+    - gparted
 
 - name: install desktop related tools
   apt: pkg={{ item }}
