@@ -43,6 +43,9 @@
     create=yes
   tags: nvm
 
+- name: create .zprofile file
+  copy: src=zprofile dest=/home/{{username}}/.zprofile
+
 - block:
     - name: check if {{ nvm.node_version}} exists
       shell: source ~/.profile && nvm list | grep {{ nvm.node_version }}
