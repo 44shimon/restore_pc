@@ -30,6 +30,7 @@
     - revelation
     - gparted
     - libreadline-dev
+    - squashfs-tools
 
 - name: install desktop related tools
   apt: pkg={{ item }}
