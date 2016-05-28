@@ -200,3 +200,13 @@
 - name: install docker
   apt: name=docker-engine
   tags: docker
+
+- name: install simplescreenrecorder ppa
+  apt_repository: repo="ppa:maarten-baert/simplescreenrecorder" update_cache=yes
+  tags: ssr
+
+- name: install simple screen recorder
+  apt: name=simplescreenrecorder
+  tags: ssr
+
+

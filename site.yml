@@ -5,6 +5,6 @@
     - { role: setup_system, tags: ['system_setup']  }
 
 - hosts: 127.0.0.1
-  user: "{{ username }}"
+  user: {{ default_user }}
   roles:
     - { role: user_configs, tags: [ 'user_config' ]}
