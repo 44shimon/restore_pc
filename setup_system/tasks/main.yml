@@ -30,7 +30,9 @@
     - revelation
     - gparted
     - libreadline-dev
+    # for building tinycore linux vagrant boxes
     - squashfs-tools
+    - advancecomp
 
 - name: install desktop related tools
   apt: pkg={{ item }}
