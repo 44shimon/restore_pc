@@ -2,6 +2,7 @@
 - hosts: 127.0.0.1
   remote_user: root
   roles:
+    - { role: check_default_user_is_defined }
     - { role: setup_system, tags: ['system_setup']  }
 
 - hosts: 127.0.0.1

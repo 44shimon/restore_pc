@@ -1,0 +1,158 @@
+- name: install virtualization related apps
+  apt: pkg={{ item }} update_cache=yes
+  with_items:
+    - qemu-kvm
+    - libvirt-bin
+    - wireshark
+    - libguestfs-tools
+    - python-setuptools
+
+- name: install general tools
+  apt: pkg={{ item }}
+  with_items:
+    - iotop
+    - build-essential
+    - git-buildpackage
+    - python-software-properties
+    - software-properties-common
+    - tree
+    - htop
+    - zsh
+    - ruby-dev
+    - libvirt-dev
+    - unzip
+    - libxml2-dev
+    - zlib1g-dev
+    - gitg
+    - curl
+    - revelation
+    - gparted
+    - libreadline-dev
+    # for building tinycore linux vagrant boxes
+    - squashfs-tools
+    - advancecomp
+    - whois
+    - exfat-fuse
+    - exfat-utils
+
+- name: install desktop related tools
+  apt: pkg={{ item }}
+  with_items:
+    - gimp
+    - inkscape
+    - gip
+    - revelation
+    - zsh
+    - vim-nox
+    - blueman
+    - pencil
+    - transmission
+    - virt-manager
+    - virt-viewer
+    - pidgin
+    - vim-gnome
+    - vlc
+    - gtk-recordmydesktop
+    - shotwell
+  tags: desktop
+
+- name: install pip using easy_install
+  command: easy_install pip creates=/usr/local/bin/pip
+
+- name: install netshow
+  pip: name=netshow-linux-lib
+
+- name: set zsh as the default shell for users in the user_list var
+  user: name={{ item }} shell=/bin/zsh
+  items: user_list
+
+- block:
+    - name: check if Atom deb is installed
+      apt: name=atom state=present
+  rescue:
+    - name: download latest version of Atom
+      get_url: url=https://atom.io/download/deb dest=/tmp
+      register: url_result
+    - name: install Atom deb
+      apt: deb="{{ url_result.dest }}"
+
+- block:
+    - name: check if Vagrant deb is installed
+      shell: dpkg -l  | grep vagrant
+  rescue:
+    - name: download latest vagrant
+      get_url:
+        url: "https://releases.hashicorp.com/vagrant/{{ vagrant_version}}/vagrant_{{ vagrant_version }}_x86_64.deb"
+        dest: /tmp
+      register: vagrant_download
+    - name: install vagrant deb
+      apt: deb="{{ vagrant_download.dest }}" state=present
+
+- block:
+    - name: check if packer is installed
+      file: path="/opt/packer/packer" state=file
+  rescue:
+    - name: download packer file
+      get_url:
+        url: "https://releases.hashicorp.com/packer/{{ packer_version}}/packer_{{ packer_version }}_linux_amd64.zip"
+        dest: /tmp
+      register: packer_zip
+
+    - name: create packer home directory
+      file: path=/opt/packer state=directory mode=0755
+
+    - name: unarchive packer file
+      unarchive:
+        src: "{{ packer_zip.dest }}"
+        dest: "/opt/packer/"
+
+- name: create a symlink for the packer executable
+  file: src=/opt/packer/packer dest=/usr/local/bin/packer state=link
+
+- block:
+    - name: check if google chrome is installed
+      apt: name=google-chrome-stable
+
+  rescue:
+    - name: add google chrome apt key
+      apt_key:
+        url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
+    - name: apt repo for google chrome
+      apt_repository:
+        repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+    - name: install chrome stable
+      apt: name=google-chrome-stable update_cache=yes
+  tags: desktop
+
+- name: install apt-transport-https and ca-certs. docker req
+  apt: name={{ item }}
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+  tags: docker
+
+- name: install docker repo key
+  apt_key:
+    keyserver:  hkp://p80.pool.sks-keyservers.net:80
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+  tags: docker
+
+- name: isntall docker source repo
+  apt_repository:
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-{{ansible_distribution_release}} main"
+    state: present
+  tags: docker
+
+- name: install docker
+  apt: name=docker-engine
+  tags: docker
+
+- name: install simplescreenrecorder ppa
+  apt_repository: repo="ppa:maarten-baert/simplescreenrecorder" update_cache=yes
+  tags: ssr
+
+- name: install simple screen recorder
+  apt: name=simplescreenrecorder
+  tags: ssr
+
+

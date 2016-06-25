@@ -1,0 +1,2 @@
+- fail: msg=" default_user var not defined "
+  when: default_user is not defined
