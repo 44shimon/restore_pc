@@ -1,6 +1,16 @@
 user_list: ['skamithi']
 vagrant_version: "1.8.1"
 packer_version: "0.10.0"
+
+# used by docker role
+pip_version_pip: 8.1.2
+pip_version_setuptools: 23.1.0
+pip_version_docker_py: 1.8.1
+pip_version_docker_compose: 1.7.1
+docker_opts: >
+  --bip=192.168.100.1/22
+  --fixed-cidr=192.168.101.0/26
+
 nvm:
   version: "v0.31.0"
   node_version: "v5.10.0"

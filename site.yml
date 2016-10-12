@@ -1,11 +1,12 @@
 ---
-- hosts: 127.0.0.1
+- hosts: localhost
   remote_user: root
   roles:
     - { role: check_default_user_is_defined }
     - { role: setup_system, tags: ['system_setup']  }
+    - { role: docker, tags: ['docker'] }
 
-- hosts: 127.0.0.1
+- hosts: localhost
   user: "{{ default_user }}"
   roles:
     - { role: user_configs, tags: [ 'user_config' ]}
