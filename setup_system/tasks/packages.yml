@@ -1,3 +1,4 @@
+---
 - name: install virtualization related apps
   apt: pkg={{ item }} update_cache=yes
   with_items:
@@ -78,15 +79,27 @@
 
 - block:
     - name: check if Vagrant deb is installed
-      shell: dpkg -l  | grep vagrant
+      shell: dpkg -l | grep vagrant | awk -F" " '{print $3}' | awk -F":" '{print $2}'
+      tags: vagrant
+      register: current_vagrant_version
+
+    - name: check vagrant version
+      fail:
+        msg: "Incorrect version current: {{ current_vagrant_version.stdout }} desired: {{ vagrant_version }}"
+      when: current_vagrant_version.stdout != vagrant_version
+      tags: vagrant
+
   rescue:
-    - name: download latest vagrant
+    - name: download proper vagrant
       get_url:
         url: "https://releases.hashicorp.com/vagrant/{{ vagrant_version}}/vagrant_{{ vagrant_version }}_x86_64.deb"
         dest: /tmp
       register: vagrant_download
+      tags: vagrant
+
     - name: install vagrant deb
       apt: deb="{{ vagrant_download.dest }}" state=present
+      tags: vagrant
 
 - block:
     - name: check if packer is installed

@@ -1,5 +1,5 @@
 user_list: ['skamithi']
-vagrant_version: "1.8.1"
+vagrant_version: "1.8.6"
 packer_version: "0.10.0"
 
 # used by docker role
