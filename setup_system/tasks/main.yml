@@ -6,4 +6,11 @@
   copy:
     content: "options sdhci debug_quirks2='0x10000'"
     dest: /etc/modprobe.d/sdhci.conf
+  tags: fix_sdhci
 
+- name: include script to reload wireless modules on resume/thaw
+  copy:
+    src: 100_reload_wireless
+    dest: /etc/pm/sleep.d/100_reload_wireless
+    mode: 0700
+  tags: resume_wireless

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+PATH=/sbin:/usr/sbin:/usr/bin
+
+case "${1}" in
+    resume|thaw)
+       rmmod ivlmvm
+       modprobe ivlmvm
+       ;;
+esac
+
