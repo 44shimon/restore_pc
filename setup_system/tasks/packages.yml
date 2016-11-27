@@ -10,6 +10,7 @@
 
 - name: install general tools
   apt: pkg={{ item }}
+  tags: 'sys_pkgs'
   with_items:
     - iotop
     - build-essential
@@ -35,6 +36,7 @@
     - whois
     - exfat-fuse
     - exfat-utils
+    - hfsprogs
 
 - name: install desktop related tools
   apt: pkg={{ item }}
