@@ -2,6 +2,12 @@
 - include: packages.yml
 - include: tmpfs_dirs.yml
 
+- name: include script to suspend VMS before sleep. prevents high cpu
+  copy:
+    src: suspend-vms
+    dest: /etc/pm/sleep.d/suspend-vms
+    mode: 0700
+
 - name: make sure i can load my 64gb mmc card. Add quirk. Ref https://goo.gl/rwu4ci
   copy:
     content: "options sdhci debug_quirks2='0x10000'"

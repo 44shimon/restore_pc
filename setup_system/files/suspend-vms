@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if [ "${1}" == "pre" ]; then
+  # Do the thing you want before suspend here, e.g.:
+  logger "we are suspending at $(date)..."
+  for vm in $(virsh -q list --state-running | awk '{print $2}'); do
+    logger "suspending $vm"
+    virsh suspend $vm
+  done
+elif [ "${1}" == "post" ]; then
+  # Do the thing you want after resume here, e.g.:
+  logger "come out of suspend mode at $(date).."
+  for vm in $(virsh -q list --state-paused | awk '{print $2}'); do
+    logger "resuming $vm"
+    virsh resume $vm
+  done
+
+fi
