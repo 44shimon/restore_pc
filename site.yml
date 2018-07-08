@@ -1,12 +1,14 @@
 ---
 - hosts: localhost
-  remote_user: root
+  connection: local
+  become: true
   roles:
     - { role: check_default_user_is_defined }
     - { role: setup_system, tags: ['system_setup']  }
     - { role: docker, tags: ['docker'] }
 
 - hosts: localhost
+  connection: local
   user: "{{ default_user }}"
   roles:
     - { role: user_configs, tags: [ 'user_config' ]}

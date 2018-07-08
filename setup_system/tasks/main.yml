@@ -1,6 +1,7 @@
 #:set ft=ansible
 - include: packages.yml
 - include: tmpfs_dirs.yml
+  tags: tmpfs
 
 - name: include script to suspend VMS before sleep. prevents high cpu
   copy:
@@ -20,3 +21,9 @@
     dest: /etc/pm/sleep.d/100_reload_wireless
     mode: 0700
   tags: resume_wireless
+
+- name: set sysctl to work with angular ng serve
+  - sysctl:
+    name: fs.inotify.max_user_watches
+    value: 524288
+    state: present
